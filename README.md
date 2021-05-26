@@ -1,4 +1,4 @@
-Programmer for over 10 years. Over 2,800 different developers have started/watched my projects here. Stackoverflow lists in me in the top <a href="https://stackoverflow.com/users/99923/xeoncross">1% of develpers</a>. Currently looking for work.
+Programmer for over 10 years. Over 2,800 different developers have started/watched my projects here. Stackoverflow lists in me in the top <a href="https://stackoverflow.com/users/99923/xeoncross">1% of develpers</a>.
 
 Experiance building queues, insurance onboarding, streaming encryption wrappers, audio extraction, natural language processing (NLP), video transcoding, content systems (blogs, forums, etc..), documentation generators, single sign on (SSO) providers, WebRTC, web crawlers, and many more diverse projects. 
 
