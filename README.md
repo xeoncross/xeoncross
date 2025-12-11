@@ -1,24 +1,10 @@
-Programmer for over 10 years. Over 2,800 different developers have started/watched my projects here. Stackoverflow lists in me in the top <a href="https://stackoverflow.com/users/99923/xeoncross">1% of develpers</a>. I've designed backend systems, shipped features to millions of people and rewriten applications to meet demand.
+Programmer for over 20 years. Over 2,800 different developers have started/watched my projects here. Stackoverflow lists in me in the top <a href="https://stackoverflow.com/users/99923/xeoncross">1% of develpers</a>. I'm the author of the fastest internal serverless app template at the largest techonology company in the world. An OWASP contributor. I moderate a community of over 10,000 developers and managers. I've given away millions of lines of code publically and inside companies with thousands of engineers.
 
-Experiance building queues, insurance onboarding, streaming encryption wrappers, audio extraction, natural language processing (NLP), video transcoding, content systems (blogs, forums, etc..), documentation generators, single sign on (SSO) providers, WebRTC, web crawlers, and many more diverse projects. 
+Chances are high you've worked with my code, docs, or products (or someone who has). I've designed backend systems, shipped features to millions of people and rewriten applications to meet demand. I can scale teams and applications or build them from scratch. I love teaching other programmers things.
 
-User interfaces with next.js, react, bootstrap, material-ui, and styled-components (powered by flexbox and typescript).
-
-I'm a domain and services designer. I approach foundations with a focus on the business ideas and assertions that make up the core of a product or suite. I've mentored developers, written roadmaps, and started company-wide training initiaves to solve scaling problems through teaching and sharing.
-
-I can scale teams and applications or build them from scratch.
+These days I'm trying to focus more effort on being a good dad.
 
 <!--
 **Xeoncross/xeoncross** is a ✨ _special_ ✨ repository because its `README.md` (this file) appears on your GitHub profile.
 
-Here are some ideas to get you started:
-
-- 🔭 I’m currently working on ...
-- 🌱 I’m currently learning ...
-- 👯 I’m looking to collaborate on ...
-- 🤔 I’m looking for help with ...
-- 💬 Ask me about ...
-- 📫 How to reach me: ...
-- 😄 Pronouns: ...
-- ⚡ Fun fact: ...
 -->
