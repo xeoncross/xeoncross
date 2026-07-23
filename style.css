@@ -1,0 +1,221 @@
+/*
+ * style.css — clean, single-column layout for blogish posts.
+ * Injected automatically by blogish.js.
+ */
+
+:root {
+	--content-width: 42rem;
+	--text: #1a1a1a;
+	--muted: #6b7280;
+	--bg: #ffffff;
+	--accent: #2563eb;
+	--code-bg: #f4f4f5;
+	--border: #e5e7eb;
+	--tok-comment: #6b7280;
+	--tok-string: #0a7d2c;
+	--tok-symbol: #9333ea;
+	--font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
+		Arial, sans-serif;
+	--mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+}
+
+/* Dark theme — blogish.js toggles the .dark class on <body>. */
+body.dark {
+	--text: #e5e7eb;
+	--muted: #9ca3af;
+	--bg: #0f1115;
+	--accent: #60a5fa;
+	--code-bg: #1c1f26;
+	--border: #2a2f3a;
+	--tok-comment: #7f8794;
+	--tok-string: #4ade80;
+	--tok-symbol: #c084fc;
+}
+
+* {
+	box-sizing: border-box;
+}
+
+body {
+	margin: 0;
+	background: var(--bg);
+	color: var(--text);
+	font-family: var(--font);
+	font-size: 18px;
+	line-height: 1.7;
+	-webkit-font-smoothing: antialiased;
+	text-rendering: optimizeLegibility;
+}
+
+article {
+	max-width: var(--content-width);
+	margin: 0 auto;
+	padding: 4rem 1.25rem 6rem;
+}
+
+/* Floating light/dark toggle injected by blogish.js. */
+.theme-toggle {
+	position: fixed;
+	top: 1rem;
+	right: 1rem;
+	width: 2.5rem;
+	height: 2.5rem;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 0;
+	font-size: 1.2rem;
+	line-height: 1;
+	border: 1px solid var(--border);
+	border-radius: 50%;
+	background: var(--code-bg);
+	color: var(--text);
+	cursor: pointer;
+	transition: border-color 0.15s ease, transform 0.15s ease;
+}
+
+.theme-toggle:hover {
+	border-color: var(--accent);
+	transform: scale(1.05);
+}
+
+/* Headings ---------------------------------------------------------------- */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+	line-height: 1.25;
+	font-weight: 700;
+	margin: 2.5rem 0 1rem;
+}
+
+h1 {
+	font-size: 2.25rem;
+	margin-top: 0;
+	letter-spacing: -0.02em;
+}
+
+h2 {
+	font-size: 1.6rem;
+	letter-spacing: -0.01em;
+}
+
+h3 {
+	font-size: 1.3rem;
+}
+
+h4,
+h5,
+h6 {
+	font-size: 1.1rem;
+}
+
+/* Text -------------------------------------------------------------------- */
+p {
+	margin: 0 0 1.4rem;
+}
+
+a {
+	color: var(--accent);
+	text-decoration: none;
+}
+
+a:hover {
+	text-decoration: underline;
+}
+
+strong {
+	font-weight: 700;
+}
+
+/* Lists ------------------------------------------------------------------- */
+ul,
+ol {
+	margin: 0 0 1.4rem;
+	padding-left: 1.5rem;
+}
+
+li {
+	margin: 0.35rem 0;
+}
+
+/* Media ------------------------------------------------------------------- */
+img,
+iframe {
+	display: block;
+	max-width: 100%;
+	margin: 2rem auto;
+}
+
+img {
+	height: auto;
+	border-radius: 8px;
+}
+
+iframe {
+	width: 100%;
+	aspect-ratio: 16 / 9;
+	height: auto;
+	border: 0;
+	border-radius: 8px;
+}
+
+/* Code -------------------------------------------------------------------- */
+code {
+	font-family: var(--mono);
+	font-size: 0.9em;
+	background: var(--code-bg);
+	padding: 0.15em 0.4em;
+	border-radius: 4px;
+}
+
+pre {
+	background: var(--code-bg);
+	border: 1px solid var(--border);
+	border-radius: 8px;
+	padding: 1rem 1.25rem;
+	overflow-x: auto;
+	margin: 0 0 1.4rem;
+}
+
+pre code {
+	background: none;
+	padding: 0;
+	font-size: 0.85rem;
+	line-height: 1.5;
+}
+
+/* Syntax highlighting tokens. */
+.tok-comment {
+	color: var(--tok-comment);
+	font-style: italic;
+}
+
+.tok-string {
+	color: var(--tok-string);
+}
+
+.tok-symbol {
+	color: var(--tok-symbol);
+}
+
+/* Blockquote -------------------------------------------------------------- */
+blockquote {
+	margin: 0 0 1.4rem;
+	padding: 0.25rem 0 0.25rem 1.25rem;
+	border-left: 3px solid var(--border);
+	color: var(--muted);
+}
+
+blockquote p {
+	margin: 0;
+}
+
+/* Rule -------------------------------------------------------------------- */
+hr {
+	border: 0;
+	border-top: 1px solid var(--border);
+	margin: 3rem 0;
+}

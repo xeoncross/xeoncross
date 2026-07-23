@@ -1,0 +1,176 @@
+# Better Go API
+
+> What is this: I'm the author of the Go framework [`mid`](https://github.com/xeoncross/mid) and I'm going to explain why I wrote it and why you should try it for JSON services.
+
+Go is used for a lot of web services. Writing Go handlers to take in request bodies, validate the input, and return a JSON response is something I've done for years and years. Can we make it easier? 
+
+After thinking about the most ergonomic approach I've been unable to improve on the following:
+
+```go
+
+func myHandler(input) (output, error) {
+    ...business logic...
+    return Output{}, nil
+}
+```
+
+What if we only defined our input/output shape (looking at you OpenAPI), and then had middleware that handled both the validation and response format for us? What could be more basic than a function with typed input and output waiting only for the core logic to be added.
+
+Consider the following example post object someone might submit to a public discussion thread. Their email, a title, and message body with some basic sanity validations.
+
+```go
+type UserComment struct {
+    Email   string validate:"required,email"`
+    Title   string validate:"required,alphanumspace"`
+    Message string validate:"required"`
+}
+```
+All three fields are required and should at least seem reasonable. 
+
+Great, now lets move onto the popular Go frameworks that exist and see what the handler/controller/endpoint would look like for each one. First I want to compare the ergonomics of using each and then we'll get to benchmarks/performance.
+
+## Mid
+
+If you use [`xeoncross/mid`](https://github.com/xeoncross/mid) the handler will look almost identical to our pure function:
+
+```go
+func midHandler(input UserComment) (any, error) {
+    id, err := insertTheComment(input)
+    return UserCommentResponse{id}, err
+}
+```
+
+No checks are needed. If the request body doesn't match the shape or the validation fails this handler will never be called. If it's called you know you have a valid `UserComment` object just as you intended.
+
+Validation failures will result in a `{"errors":{"email":....}` object explaining which fields failed so your UI can alert the user to fields that need updating.
+
+## Gongular
+
+If you use [`Gongular`](https://github.com/mustafaakin/gongular) it would look like the following:
+
+```go
+type GongularHandler struct {
+    Body  UserComment
+}
+
+func (m *GongularHandler) Handle(c *gongular.Context) error {
+    id, err := insertTheComment(input)
+    if err != nil {
+        return err
+    }
+    c.SetBody(UserCommentResponse{id})
+    return nil
+}
+```
+
+Suddently four lines of code trippled. However, we still get the same pre-validation autoconfiguration for us and don't have to worry about our handler being called until the input matches what we expect. 
+
+Instead of defining the input shape as a function argument though we must define it on a struct and then attach our handler as a method on it.
+
+In truth, the extra lines of code aren't as bad since we might use a struct format in mid as well to ensure we're properly injecting fields like the database connection or logging instance into our handlers:
+
+```go
+type MidController struct {
+    db *DB
+}
+func (self *MidController) midHandler(input UserComment) (any, error) { ... }
+```
+
+## Gin
+
+Most Go developers eventually run across the [`Gin`](https://github.com/gin-gonic/gin) framework. It's a well-known web framework and the place in this story where we must start manually validating our inputs for the remaining contenders. 
+
+Gin doesn't assume it knows which transport or how you want validation reported to the client. However, in exchange for this flexibility you have to handle binding and validating user input yourself:
+
+```go
+func ginHandler(c *gin.Context) {
+    s := &UserComment{}
+    if err := c.ShouldBindJSON(s); err != nil {
+        c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+        return
+    }
+
+    id, err := insertTheComment(input)
+    if err != nil {
+        c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+        return
+    }
+
+    c.JSON(http.StatusOK, UserCommentResponse{id})
+}
+```
+
+Unfortunately, even with all this extra code we're unable to get keyed validation objects which report which fields failed for the client to use to highlight the form fields. Additional code is needed to type check the errors and then convert the validation errors into field -> message pairs.
+
+# Echo
+
+Barely faster is the [`echo`](https://github.com/labstack/echo) framework. It's similar to Gin, however splits out the bind and validation steps into their own calls making the code even longer:
+
+```go
+func echohandler(c *echo.Context) (err error) {
+    s := &UserComment{}
+    if err = c.Bind(s); err != nil {
+        return c.JSON(http.StatusBadRequest, map[string]string{"error": err.Error()})
+    }
+    
+    if err = c.Validate(s); err != nil {
+        return c.JSON(http.StatusBadRequest, map[string]string{"error": err.Error()})
+    }
+    
+    id, err := insertTheComment(input)
+    if err != nil {
+        c.JSON(http.StatusBadRequest, map[string]string{"error": err.Error()})
+        return
+    }
+
+    return c.JSON(http.StatusOK, UserCommentResponse{id})
+}
+```
+
+## Fiber
+
+Last, we can take on the fastest mainstream Go framework that gives up the `net/http` package entirely to optimize for the `fasthttp` library. Like Gin & echo, [`fiber`](https://github.com/gofiber/fiber) likewise does not provide detailed response objects indicating which field actually failed encoding/validation. 
+
+```go
+func fiberHandler(c fiber.Ctx) error {
+    s := &UserComment{}
+    if err := c.Bind().JSON(s); err != nil {
+        return c.JSON(map[string]string{"error": err.Error()})
+    }
+
+    id, err := insertTheComment(input)
+    if err != nil {
+        return c.JSON(http.StatusBadRequest, map[string]string{"error": err.Error()})
+    }
+
+    return c.JSON(UserCommentResponse{id})
+}
+```
+
+While the extra code is not major, it does bother me that these frameworks push transport logic into each handler requiring a lot of repetition and places for input validation to grow out-of-sync. 
+
+## Lines of Code
+
+How much code is required from each library for this? If these projects stopped being maintained what kind of support would be needed to take over the project? Here are the lines of Go code `cloc` provides (excluding comments & whitespace):
+
+- [`mid`](https://github.com/xeoncross/mid): 817
+- [`gongular`](https://github.com/mustafaakin/gongular): 2,051
+- [`gin`](https://github.com/gin-gonic/gin): 17,027
+- [`echo`](https://github.com/labstack/echo): 40,320
+- [`fiber`](https://github.com/gofiber/fiber): 98,380
+
+The feature breadth represented here far exceeds what xeoncross/mid provides so it's not a fair comparison in any way. Feaures like session handling, template parsing and many others exist in these frameworks. 
+
+However, if you're only interested in input validation and response handling from a `net/http` compatible middleware then it's still worth considering the cost of a large framework dependency.
+
+## Benchmarks
+
+So perhaps you're interested in making API's more ergonomic. What is the overhead cost for this extra "magic" of having client input translated into properly-checked types? 
+
+<a href="https://github.com/xeoncross/mid-benchmarks">Actually nothing really</a>
+
+<img src="https://github.com/xeoncross/mid-benchmarks/blob/main/cmd/benchchart/charts/server-ns.svg?raw=true" alt="benchmark comparison" />
+
+While Fiber is slightly faster than the net/http frameworks, Mid is just as snappy as Echo and Gin when dealing with requests. With the exception of Gongular (which is the closest in functionality to Mid), all frameworks handle about 20,000 TPS on my 5-year old macbook.
+
+<script src="../blogish.js"></script>
